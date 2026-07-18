@@ -3052,6 +3052,7 @@ function PlayPageClient() {
 
   /**
    * 启动14分钟定时刷新器
+   * xiaoya：始终启用；openlist：仅当 detail.refresh14m 为 true
    */
   const startRefreshTimer = (hls: any, video: HTMLVideoElement) => {
     // 清除旧定时器
@@ -3060,8 +3061,17 @@ function PlayPageClient() {
       refreshTimerRef.current = null;
     }
 
-    // 只对xiaoya源启动定时器
+    // 无原始可刷新 URL 则跳过
     if (!currentXiaoyaUrlRef.current) {
+      return;
+    }
+
+    // openlist 仅在 PathMeta.refresh14m 开启时续期；xiaoya 保持原逻辑
+    const isOpenlistPlayUrl = currentXiaoyaUrlRef.current.startsWith(
+      '/api/openlist/play'
+    );
+    if (isOpenlistPlayUrl && !detailRef.current?.refresh14m) {
+      console.log('[定时刷新] OpenList 路径未开启 refresh14m，跳过');
       return;
     }
 
@@ -3168,8 +3178,15 @@ function PlayPageClient() {
     if (isSpecialLazyPlayUrl) {
       try {
         // 保存原始URL（用于后续刷新）
-        if (newUrl.startsWith('/api/xiaoya/play') || newUrl.startsWith('/api/openlist/play')) {
+        // xiaoya：始终保存；openlist：仅 refresh14m 时保存（否则不启 14 分钟续期）
+        if (newUrl.startsWith('/api/xiaoya/play')) {
           currentXiaoyaUrlRef.current = newUrl;
+        } else if (newUrl.startsWith('/api/openlist/play')) {
+          if (detailData?.refresh14m) {
+            currentXiaoyaUrlRef.current = newUrl;
+          } else {
+            currentXiaoyaUrlRef.current = '';
+          }
         }
 
         // 添加 format=json 参数
@@ -3183,6 +3200,27 @@ function PlayPageClient() {
         }
         if (data.url) {
           newUrl = data.url;
+          // play 响应可带回 refresh14m，覆盖 detail（配置热更新后仍一致）
+          if (
+            typeof data.refresh14m === 'boolean' &&
+            detailData?.source === 'openlist'
+          ) {
+            detailData.refresh14m = data.refresh14m;
+            if (detailRef.current?.source === 'openlist') {
+              detailRef.current.refresh14m = data.refresh14m;
+            }
+            if (data.refresh14m && currentXiaoyaUrlRef.current === '') {
+              // 若此前因 detail 未带 flag 未保存，用原始 lazy url 兜底
+              const originalLazy =
+                detailData?.episodes?.[episodeIndex] || '';
+              if (originalLazy.startsWith('/api/openlist/play')) {
+                currentXiaoyaUrlRef.current = originalLazy;
+              }
+            }
+            if (!data.refresh14m) {
+              currentXiaoyaUrlRef.current = '';
+            }
+          }
           // 保存清晰度列表
           if (data.qualities && data.qualities.length > 0) {
             setVideoQualities(data.qualities);

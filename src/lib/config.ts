@@ -708,6 +708,9 @@ export function configSelfCheck(adminConfig: AdminConfig): AdminConfig {
     if (adminConfig.OpenListConfig.OfflineDownloadPassword === undefined) {
       adminConfig.OpenListConfig.OfflineDownloadPassword = '';
     }
+    if (adminConfig.OpenListConfig.PathMeta === undefined) {
+      adminConfig.OpenListConfig.PathMeta = {};
+    }
   }
 
   // 用户信息已迁移到新版数据库

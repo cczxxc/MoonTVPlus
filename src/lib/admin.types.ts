@@ -166,6 +166,16 @@ export interface AdminConfig {
     ScanInterval?: number; // 定时扫描间隔（分钟），0表示关闭，最低60分钟
     ScanMode?: 'torrent' | 'name' | 'hybrid'; // 扫描模式：torrent=种子库匹配，name=名字匹配，hybrid=混合模式（默认）
     DisableVideoPreview?: boolean; // 禁用预览视频，直接返回直连链接
+    /**
+     * 路径元信息（最长前缀匹配 folder 路径）
+     * key: 规范化路径前缀，如 /videos 可匹配 /videos/某影片
+     */
+    PathMeta?: {
+      [path: string]: {
+        category: string; // 分类名
+        refresh14m: boolean; // 该路径播放时是否启用 14 分钟 URL 续期
+      };
+    };
   };
   NetDiskConfig?: {
     Quark?: {
