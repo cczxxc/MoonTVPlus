@@ -107,7 +107,11 @@ export async function POST(request: NextRequest) {
       TMDBApiKey?: string;
       TMDBProxy?: string;
       TMDBReverseProxy?: string;
-      BangumiDataSource?: 'direct' | 'server-proxy' | 'custom-baseurl';
+      BangumiDataSource?:
+        | 'direct'
+        | 'server-proxy'
+        | 'custom-baseurl'
+        | 'sakura';
       BangumiApiBaseUrl?: string;
       BangumiImageBaseUrl?: string;
       BangumiProxy?: string;
@@ -179,7 +183,8 @@ export async function POST(request: NextRequest) {
       (BangumiDataSource !== undefined &&
         BangumiDataSource !== 'direct' &&
         BangumiDataSource !== 'server-proxy' &&
-        BangumiDataSource !== 'custom-baseurl') ||
+        BangumiDataSource !== 'custom-baseurl' &&
+        BangumiDataSource !== 'sakura') ||
       (BangumiApiBaseUrl !== undefined &&
         typeof BangumiApiBaseUrl !== 'string') ||
       (BangumiImageBaseUrl !== undefined &&

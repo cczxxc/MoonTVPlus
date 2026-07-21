@@ -28,7 +28,11 @@ export interface AdminConfig {
     TMDBProxy?: string;
     TMDBReverseProxy?: string;
     // 动漫/Bangumi配置
-    BangumiDataSource?: 'direct' | 'server-proxy' | 'custom-baseurl';
+    BangumiDataSource?:
+      | 'direct'
+      | 'server-proxy'
+      | 'custom-baseurl'
+      | 'sakura';
     BangumiApiBaseUrl?: string;
     BangumiImageBaseUrl?: string;
     BangumiProxy?: string;

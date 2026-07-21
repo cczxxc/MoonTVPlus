@@ -33,6 +33,7 @@ import {
   saveFavorite,
   subscribeToDataUpdates,
 } from '@/lib/db.client';
+import { getBangumiSubjectUrl } from '@/lib/bangumi.client';
 import { isNetdiskSource } from '@/lib/netdisk/source';
 import {
   base58Decode,
@@ -836,7 +837,7 @@ const VideoCard = forwardRef<VideoCardHandle, VideoCardProps>(
           icon: <Link size={20} />,
           onClick: () => {
             const url = isBangumi
-              ? `https://bgm.tv/subject/${actualDoubanId.toString()}`
+              ? getBangumiSubjectUrl(actualDoubanId.toString())
               : `https://movie.douban.com/subject/${actualDoubanId.toString()}`;
             window.open(url, '_blank', 'noopener,noreferrer');
           },
@@ -1432,7 +1433,7 @@ const VideoCard = forwardRef<VideoCardHandle, VideoCardProps>(
                 <a
                   href={
                     isBangumi
-                      ? `https://bgm.tv/subject/${actualDoubanId.toString()}`
+                      ? getBangumiSubjectUrl(actualDoubanId.toString())
                       : `https://movie.douban.com/subject/${actualDoubanId.toString()}`
                   }
                   target='_blank'
